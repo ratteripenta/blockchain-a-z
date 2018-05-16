@@ -6,24 +6,31 @@ import json
 class Blockchain:
 
     def __init__(self):
+
         self.chain = []
         self.create_block(proof=1, previous_hash='0')
 
     def create_block(self, proof, previous_hash):
+        "Create a block."
+
         block = {
             'index': len(self.chain),
             'timestamp': str(datetime.datetime.now()),
             'proof': proof,
             'previous_hash': previous_hash,
         }
+
         self.chain.append(block)
+
         return block
 
     def get_previous_block(self):
+
         return self.chain[-1]
 
     def hash_proof(self, previous_proof, next_proof):
         "Calculate the SHA256-hash"
+
         return (hashlib
                 .sha256(str(next_proof**2 - previous_proof**2).encode())
                 .hexdigest())
@@ -32,6 +39,7 @@ class Blockchain:
         "Calculate the SHA256-hash for a block."
 
         encoded_block = json.dumps(block, sort_keys=True).encode()
+
         return hashlib.sha256(encoded_block).hexdigest()
 
     def proof_of_work(self, previous_proof):
