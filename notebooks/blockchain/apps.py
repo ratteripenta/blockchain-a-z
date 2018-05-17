@@ -1,7 +1,7 @@
 import threading
-import requests
 
-from flask import Flask, request, jsonify
+import requests
+from flask import Flask, jsonify, request
 from werkzeug.serving import run_simple
 
 from . import chains
@@ -9,28 +9,16 @@ from . import chains
 
 class BlockchainApp:
 
-    def __init__(self, host='localhost', port=5000):
+    def __init__(self, host='localhost', port=5000, chain=chains.Blockchain):
 
         self.host = host
         self.port = port
-        self.chain = chains.Blockchain()
+        self.chain = chain()
 
         self.host_url = f'http://{self.host}:{self.port}'
-        self.app = Flask(__name__)
 
-        self.app.add_url_rule(
-            rule='/blocks',
-            view_func=self.api_blocks,
-            methods=['GET', 'POST']
-        )
-        self.app.add_url_rule(
-            rule='/blocks/validate',
-            view_func=self.api_validate,
-        )
-        self.app.add_url_rule(
-            rule='/shutdown',
-            view_func=self.api_shutdown,
-        )
+        self.app = Flask(__name__)
+        self.add_api_endpoints()
 
         self.thread = threading.Thread(
             target=run_simple,
@@ -50,7 +38,25 @@ class BlockchainApp:
 
         self.stop()
 
+    def add_api_endpoints(self):
+        "Add API endpoints to the Flask WebApp."
+
+        self.app.add_url_rule(
+            rule='/blocks',
+            view_func=self.api_blocks,
+            methods=['GET', 'POST']
+        )
+        self.app.add_url_rule(
+            rule='/blocks/validate',
+            view_func=self.api_validate,
+        )
+        self.app.add_url_rule(
+            rule='/shutdown',
+            view_func=self.api_shutdown,
+        )
+
     def api_blocks(self):
+        "Either retrieve the node's current chain or post a new block to the chain."
 
         if request.method == 'POST':
 
@@ -75,6 +81,7 @@ class BlockchainApp:
             return (jsonify(response), 200)
 
     def api_validate(self):
+        "Validate the chain"
 
         if self.chain.is_chain_valid(self.chain.chain):
 
@@ -89,29 +96,20 @@ class BlockchainApp:
             return (jsonify(response), 500)
 
     def api_shutdown(self):
+        "Shutdown the Flask WebApp"
 
         request.environ.get('werkzeug.server.shutdown')()
 
         return jsonify({'message': 'Shutting down'}), 200
 
-    def get_blockchain(self):
-
-        return requests.get(f'{self.host_url}/blocks')
-
-    def mine_block(self):
-
-        return requests.post(f'{self.host_url}/blocks')
-
     def start(self):
+        "Start the Flask-based Blockchain WebApp."
 
         self.thread.start()
 
     def stop(self):
+        "Stop the Flask-based Blockchain WebApp."
 
         if self.thread.is_alive():
 
             return requests.get(f'{self.host_url}/shutdown')
-
-    def validate_blockchain(self):
-
-        return requests.get(f'{self.host_url}/blocks/validate')
