@@ -1,3 +1,5 @@
+*Created by Petteri Nevavuori <<petteri.nevavuori@gmail.com>>
+---
 # blockchain-a-z
 
 This repository holds python implementations of a blockchain, a cryptocurrency and a smart contract. All are of the general purpose nature. The contents follow the course [Blockchain A-Z](https://www.udemy.com/build-your-blockchain-az/) by Kirill Eremenko and Hadelin de Ponteves in Udemy. 
