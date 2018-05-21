@@ -1,4 +1,4 @@
-*Created by Petteri Nevavuori <<petteri.nevavuori@gmail.com>>
+*Created by Petteri Nevavuori <<petteri.nevavuori@gmail.com>>*
 ---
 # blockchain-a-z
 
