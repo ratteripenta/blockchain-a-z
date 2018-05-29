@@ -1,6 +1,7 @@
 # Project related
 *.html
 documents/
+*.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
